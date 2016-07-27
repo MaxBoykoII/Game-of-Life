@@ -1,0 +1,31 @@
+{
+  "name": "game-of-life-app",
+  "description": "React implementation for James Conway's Game of Life",
+  "main": "main.js",
+  "authors": [
+    "Max Boyko <maxboykomax@gmail.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "React"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/js/bootstrap.min.js",
+        "dist/css/bootstrap.min.css"
+      ]
+    }
+  }
+}
