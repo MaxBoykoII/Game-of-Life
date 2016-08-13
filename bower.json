@@ -18,7 +18,9 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "^3.3.7"
+    "bootstrap": "^3.3.7",
+    "react": "^15.2.1",
+    "lodash": "^4.15.0"
   },
   "overrides": {
     "bootstrap": {

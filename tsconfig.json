@@ -1,0 +1,25 @@
+{"compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "pretty": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "./public/dist",
+    "rootDir": "./development/app"
+  },
+  "compileOnSave": false,
+  "files": [
+    "development/app/main.ts",
+    "typings/index.d.ts"
+  ]
+}

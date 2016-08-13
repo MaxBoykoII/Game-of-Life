@@ -1,0 +1,7 @@
+{
+  "name": "game-of-life-app",
+  "dependencies": {},
+  "globalDependencies": {
+    "lodash": "registry:dt/lodash#4.14.0+20160802150749"
+  }
+}

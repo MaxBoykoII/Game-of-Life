@@ -1,0 +1,32 @@
+body {
+  background: lighten(#e32636, 10%);
+  color: lighten(#e49b0f, 20%);
+}
+
+h1 {
+  text-align: center;
+}
+
+.controls{
+  button{
+    color: black;
+  }
+}
+
+table {
+  margin: 0 auto;
+  background: black;
+  border: 2px solid #8E3A59;
+  padding: 2px;
+  -webkit-box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.75);
+  td {
+    height: 8px;
+    width: 8px;
+  }
+  tr,
+  td {
+    border: 1px solid #8E3A59;
+  }
+}
