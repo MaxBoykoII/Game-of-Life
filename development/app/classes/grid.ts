@@ -49,6 +49,7 @@ export class Grid {
         for (let cell of this.cells) {
             if (Math.random() > threshold) {
                 cell.state = State.Alive;
+                cell.inchoate = true;
             }
         }
     }
@@ -97,5 +98,6 @@ export class Grid {
             cell.state = cell.nextState;
             cell.nextState = State.Pending;
         }
+        return this;
     }
 }

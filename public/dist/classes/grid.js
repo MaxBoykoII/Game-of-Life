@@ -29,6 +29,7 @@ var Grid = (function () {
             var cell = _a[_i];
             if (Math.random() > threshold) {
                 cell.state = state_enum_1.State.Alive;
+                cell.inchoate = true;
             }
         }
     };
@@ -78,6 +79,7 @@ var Grid = (function () {
             cell.state = cell.nextState;
             cell.nextState = state_enum_1.State.Pending;
         }
+        return this;
     };
     return Grid;
 }());
