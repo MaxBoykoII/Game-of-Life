@@ -1,5 +1,6 @@
 "use strict";
-var grid_1 = require('./classes/grid');
-var testGrid = new grid_1.Grid(30, 40);
-testGrid.initialize(0.75);
-testGrid.update();
+var ReactDOM = require('react-dom');
+var React = require('react');
+var game_grid_1 = require('./components/game-grid');
+console.log(game_grid_1.GameGrid);
+ReactDOM.render(React.createElement(game_grid_1.GameGrid, null), document.getElementById('grid-container'));

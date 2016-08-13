@@ -2,6 +2,7 @@
   "name": "game-of-life-app",
   "dependencies": {},
   "globalDependencies": {
-    "lodash": "registry:dt/lodash#4.14.0+20160802150749"
+    "lodash": "registry:dt/lodash#4.14.0+20160802150749",
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040"
   }
 }

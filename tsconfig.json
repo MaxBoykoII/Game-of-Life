@@ -1,7 +1,9 @@
-{"compilerOptions": {
+{
+  "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
+    "jsx": "react",
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -19,7 +21,7 @@
   },
   "compileOnSave": false,
   "files": [
-    "development/app/main.ts",
+    "development/app/main.tsx",
     "typings/index.d.ts"
   ]
 }

@@ -78,7 +78,6 @@ var Grid = (function () {
             cell.state = cell.nextState;
             cell.nextState = state_enum_1.State.Pending;
         }
-        console.log(this.cells);
     };
     return Grid;
 }());
