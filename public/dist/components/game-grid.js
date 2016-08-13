@@ -8,20 +8,20 @@ var React = require('react');
 var _ = require('lodash');
 var grid_1 = require('../classes/grid');
 var state_enum_1 = require('../constants/state-enum');
-var testGrid = new grid_1.Grid(30, 40);
-testGrid.initialize(0.92);
+var testGrid = new grid_1.Grid(70, 50);
+testGrid.initialize(0.91);
 var GameGrid = (function (_super) {
     __extends(GameGrid, _super);
     function GameGrid() {
         _super.call(this);
         this.state = {
             grid: testGrid,
-            xLim: 30,
-            yLim: 40
+            xLim: 70,
+            yLim: 50,
+            generations: 0
         };
     }
-    GameGrid.prototype.buildTableRows = function () {
-        console.log('tyring to build rows!');
+    GameGrid.prototype._buildTableRows = function () {
         var lis = [];
         var _loop_1 = function(i) {
             var row = [];
@@ -31,12 +31,19 @@ var GameGrid = (function (_super) {
                 var style = {
                     backgroundColor: color
                 };
-                row.push(React.createElement("td", {style: style}));
+                var index = this_1.state.grid.cells.indexOf(cell);
+                row.push({
+                    style: style,
+                    index: index
+                });
             };
             for (var j = 1; j <= this_1.state.yLim; j++) {
                 _loop_2(j);
             }
-            lis.push(React.createElement("tr", null, row));
+            lis.push(row.map(function (_a) {
+                var style = _a.style, index = _a.index;
+                return React.createElement("td", {key: index, style: style});
+            }));
         };
         var this_1 = this;
         for (var i = 1; i <= this.state.xLim; i++) {
@@ -46,14 +53,22 @@ var GameGrid = (function (_super) {
     };
     GameGrid.prototype.update = function () {
         var grid = this.state.grid.update();
-        this.setState({ grid: grid });
+        this.setState({
+            grid: grid,
+            generations: grid.generations
+        });
     };
     GameGrid.prototype.componentDidMount = function () {
         var _this = this;
-        setInterval(function () { _this.update(); }, 2000);
+        setInterval(function () {
+            _this.update();
+        }, 125);
     };
     GameGrid.prototype.render = function () {
-        return (React.createElement("table", null, this.buildTableRows()));
+        return (React.createElement("table", null, React.createElement("caption", null, this.state.generations), React.createElement("tbody", null, this._buildTableRows().map(function (row, i) {
+            var id = "row" + i;
+            return React.createElement("tr", {key: id}, row);
+        }))));
     };
     return GameGrid;
 }(React.Component));

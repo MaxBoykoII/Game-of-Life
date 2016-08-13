@@ -18,22 +18,22 @@ import {
 from '../constants/state-enum';
 
 
-const testGrid = new Grid(30, 40);
-testGrid.initialize(0.92);
+const testGrid = new Grid(70, 50);
+testGrid.initialize(0.91);
 
 export class GameGrid extends React.Component < any, any > {
     constructor() {
         super();
-        this.state ={
+        this.state = {
             grid: testGrid,
-            xLim: 30,
-            yLim: 40
+            xLim: 70,
+            yLim: 50,
+            generations: 0
         };
     }
-    buildTableRows() {
+    _buildTableRows() {
         /* Helper to build table rows from the cells of this.state.grid */
-        console.log('tyring to build rows!');
-        
+
         let lis = [];
 
         for (let i = 1; i <= this.state.xLim; i++) {
@@ -44,20 +44,39 @@ export class GameGrid extends React.Component < any, any > {
                 const style = {
                     backgroundColor: color
                 };
-                row.push(<td style={style}></td>);
+                const index = this.state.grid.cells.indexOf(cell);
+                row.push({
+                    style,
+                    index
+                });
             }
-            lis.push(<tr>{row}</tr>);
+            lis.push(row.map(({
+                style,
+                index
+            }) => <td key={index} style={style}></td>));
         }
         return lis;
     }
-    update(){
+    update() {
         const grid = this.state.grid.update();
-        this.setState({grid});
+        this.setState({
+            grid,
+            generations: grid.generations
+        });
     }
     componentDidMount() {
-        setInterval(()=>{ this.update()}, 500);
+        setInterval(() => {
+            this.update()
+        }, 125);
     }
     render() {
-        return (<table>{this.buildTableRows()}</table>);
+        return (<table>
+            <caption>{this.state.generations}</caption>
+            <tbody>
+                {this._buildTableRows().map((row, i) => { const id = `row${i}`;
+                return <tr key={id}>{row}</tr>
+                })}
+            </tbody>
+        </table>);
     }
 }

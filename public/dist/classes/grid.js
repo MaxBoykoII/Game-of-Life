@@ -33,46 +33,55 @@ var Grid = (function () {
             }
         }
     };
-    Grid.prototype._gameRules = function (cell, liveNeighbors) {
+    Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
-            if (liveNeighbors < 2 || liveNeighbors > 3) {
-                cell.nextState = state_enum_1.State.Dead;
+            cell.inchoate = false;
+            var liveNeighbors = 0;
+            var _loop_1 = function(x, y) {
+                var neighboringCell = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighboringCell.state === state_enum_1.State.Alive) {
+                    ++liveNeighbors;
+                    if (liveNeighbors > 3) {
+                        cell.nextState = state_enum_1.State.Dead;
+                        return { value: void 0 };
+                    }
+                }
+            };
+            var this_1 = this;
+            for (var _i = 0, _a = cell.neighbors; _i < _a.length; _i++) {
+                var _b = _a[_i], x = _b[0], y = _b[1];
+                var state_1 = _loop_1(x, y);
+                if (typeof state_1 === "object") return state_1.value;
             }
-            else {
-                cell.nextState = state_enum_1.State.Alive;
-            }
+            cell.nextState = (liveNeighbors < 2) ? state_enum_1.State.Dead : state_enum_1.State.Alive;
         }
         else {
-            if (liveNeighbors === 3) {
-                cell.nextState = state_enum_1.State.Alive;
+            var liveNeighbors = 0;
+            var _loop_2 = function(x, y) {
+                var neighboringCell = _.find(this_2.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighboringCell.state === state_enum_1.State.Alive) {
+                    ++liveNeighbors;
+                    if (liveNeighbors > 3) {
+                        cell.nextState = state_enum_1.State.Dead;
+                        return { value: void 0 };
+                    }
+                }
+            };
+            var this_2 = this;
+            for (var _c = 0, _d = cell.neighbors; _c < _d.length; _c++) {
+                var _e = _d[_c], x = _e[0], y = _e[1];
+                var state_2 = _loop_2(x, y);
+                if (typeof state_2 === "object") return state_2.value;
             }
-            else {
-                cell.nextState = state_enum_1.State.Dead;
-            }
+            cell.nextState = (liveNeighbors < 3) ? state_enum_1.State.Dead : state_enum_1.State.Alive;
+            cell.inchoate = (liveNeighbors < 3) ? false : true;
         }
-    };
-    Grid.prototype._getLiveNeighbors = function (cell) {
-        var liveNeighbors = 0;
-        var _loop_1 = function(x, y) {
-            var neighboringCell = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
-            if (neighboringCell.state === state_enum_1.State.Alive) {
-                ++liveNeighbors;
-            }
-        };
-        var this_1 = this;
-        for (var _i = 0, _a = cell.neighbors; _i < _a.length; _i++) {
-            var _b = _a[_i], x = _b[0], y = _b[1];
-            _loop_1(x, y);
-        }
-        return liveNeighbors;
     };
     Grid.prototype.update = function () {
         ++this.generations;
-        console.log(this.generations);
         for (var _i = 0, _a = this.cells; _i < _a.length; _i++) {
             var cell = _a[_i];
-            var liveNeighbors = this._getLiveNeighbors(cell);
-            this._gameRules(cell, liveNeighbors);
+            this._gameRules(cell);
         }
         for (var _b = 0, _c = this.cells; _b < _c.length; _b++) {
             var cell = _c[_b];

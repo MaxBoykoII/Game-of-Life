@@ -53,46 +53,49 @@ export class Grid {
             }
         }
     }
-    _gameRules(cell, liveNeighbors) {
+    _gameRules(cell) {
         /* Method for applying game rules to particular cell */
         if (cell.state === State.Alive) {
-            if (liveNeighbors < 2 || liveNeighbors > 3) {
-                cell.nextState = State.Dead;
+            /* A cell alive for the last turn is no longer new */
+            cell.inchoate = false;
+
+            let liveNeighbors = 0;
+            for (let [x, y] of cell.neighbors) {
+                const neighboringCell = _.find(this.cells, (cell) => cell.x === x && cell.y === y);
+                if (neighboringCell.state === State.Alive) {
+                    ++liveNeighbors;
+                    if (liveNeighbors > 3) {
+                        cell.nextState = State.Dead;
+                        return;
+                    }
+                }
             }
-            else {
-                cell.nextState = State.Alive;
-            }
+            cell.nextState = (liveNeighbors < 2) ? State.Dead : State.Alive;
         }
         else {
-            if (liveNeighbors === 3) {
-                cell.nextState = State.Alive;
+            let liveNeighbors = 0;
+            for (let [x, y] of cell.neighbors) {
+                const neighboringCell = _.find(this.cells, (cell) => cell.x === x && cell.y === y);
+                if (neighboringCell.state === State.Alive) {
+                    ++liveNeighbors;
+                    if (liveNeighbors > 3) {
+                        cell.nextState = State.Dead;
+                        return;
+                    }
+                }
             }
-            else {
-                cell.nextState = State.Dead;
-            }
+            cell.nextState = (liveNeighbors < 3) ? State.Dead : State.Alive;
+            cell.inchoate = (liveNeighbors < 3) ? false : true;
         }
-    }
-    _getLiveNeighbors(cell) {
-        /* Method for counting how many live neighbors a cell has */
 
-        let liveNeighbors = 0;
-        for (let [x, y] of cell.neighbors) {
-            const neighboringCell = _.find(this.cells, (cell) => cell.x === x && cell.y === y);
-            if (neighboringCell.state === State.Alive) {
-                ++liveNeighbors;
-            }
-        }
-        return liveNeighbors;
     }
     update() {
         /* Update the generations */
         ++this.generations;
-        console.log(this.generations);
 
         /* Apply game logic to each cell */
         for (let cell of this.cells) {
-            const liveNeighbors = this._getLiveNeighbors(cell);
-            this._gameRules(cell, liveNeighbors);
+            this._gameRules(cell);
         }
         for (let cell of this.cells) {
             cell.state = cell.nextState;
