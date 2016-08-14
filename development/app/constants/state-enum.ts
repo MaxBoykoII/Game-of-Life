@@ -1,7 +1,6 @@
  enum State {
      Alive,
-     Dead,
-     Pending
+     Dead
  };
 
  export {

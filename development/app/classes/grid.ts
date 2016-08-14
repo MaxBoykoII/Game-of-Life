@@ -31,59 +31,41 @@ export class Grid {
         const center = [cell.x, cell.y];
         const limits = [this.xLim, this.yLim];
 
-        return neighborhood(center, limits).map(([x,y]) => _.find(this.cells, cell => cell.x === x && cell.y === y));
+        return neighborhood(center, limits).map(([x, y]) => _.find(this.cells, cell => cell.x === x && cell.y === y));
     }
     initialize(threshold: number) {
         /*Build Grid*/
-        for (let i = 1, xLim = this.xLim; i <= xLim; i++) {
-            for (let j = 1, yLim = this.yLim; j <= yLim; j++) {
+
+        for (let j = 1, yLim = this.yLim; j <= yLim; j++) {
+            for (let i = 1, xLim = this.xLim; i <= xLim; i++) {
                 let cell = new Cell(i, j);
                 this.cells.push(cell);
             }
         }
-        console.log(this.cells.length);
+
         /*Build Start seed*/
         for (let cell of this.cells) {
+            cell.neighbors = this.getNeighbors(cell);
+            
             if (Math.random() > threshold) {
                 cell.state = State.Alive;
                 cell.inchoate = true;
+                _.each(cell.neighbors, neighbor => ++neighbor.liveNeighbors);
             }
-            cell.neighbors = this.getNeighbors(cell);
         }
-        console.log(this.cells.filter(cell => cell.neighbors.length < 8));
     }
     _gameRules(cell) {
         /* Method for applying game rules to particular cell */
         if (cell.state === State.Alive) {
-            /* A cell alive for the last turn is no longer new */
             cell.inchoate = false;
-
-            let liveNeighbors = 0;
-            for (let neighbor of cell.neighbors) {
-                if (neighbor.state === State.Alive) {
-                    ++liveNeighbors;
-                    if (liveNeighbors > 3) {
-                        cell.nextState = State.Dead;
-                        return;
-                    }
-                }
-            }
-            cell.nextState = (liveNeighbors < 2) ? State.Dead : State.Alive;
+            cell.state = (cell.liveNeighbors === 2 || cell.liveNeighbors === 3) ? State.Alive : State.Dead;
         }
-        else {
-            let liveNeighbors = 0;
-            for (let neighbor of cell.neighbors) {
-                if (neighbor.state === State.Alive) {
-                    ++liveNeighbors;
-                    if (liveNeighbors > 3) {
-                        cell.nextState = State.Dead;
-                        return;
-                    }
-                }
-            }
-            cell.nextState = (liveNeighbors < 3) ? State.Dead : State.Alive;
-            cell.inchoate = (liveNeighbors < 3) ? false : true;
+        else if (cell.liveNeighbors === 3) {
+            cell.state = State.Alive;
+            cell.inchoate = true;
         }
+        /* Reset liveNeighbors to 0 */
+        cell.liveNeighbors = 0;
 
     }
     update() {
@@ -95,8 +77,10 @@ export class Grid {
             this._gameRules(cell);
         }
         for (let cell of this.cells) {
-            cell.state = cell.nextState;
-            cell.nextState = State.Pending;
+            /* Each live cell updates its neighbors' live cell counts */
+            if (cell.state === State.Alive) {
+                _.each(cell.neighbors, (neighbor) => ++neighbor.liveNeighbors)
+            }
         }
         return this;
     }

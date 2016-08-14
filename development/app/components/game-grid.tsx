@@ -18,16 +18,19 @@ import {
 from '../constants/state-enum';
 
 
-const testGrid = new Grid(30, 40);
-testGrid.initialize(0.57);
+const testGrid = new Grid(50, 70);
+testGrid.initialize(0.60);
+console.time('first time test');
+testGrid.update();
+console.timeEnd('first time test');
 
 export class GameGrid extends React.Component < any, any > {
     constructor() {
         super();
         this.state = {
             grid: testGrid,
-            xLim: 30,
-            yLim: 40,
+            xLim: 50,
+            yLim: 70,
             generations: 0
         };
     }
@@ -36,9 +39,9 @@ export class GameGrid extends React.Component < any, any > {
 
         let lis = [];
 
-        for (let i = 1, xLim= this.state.xLim; i <= xLim; i++) {
+        for (let j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
             let row = [];
-            for (let j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
+            for (let i = 1, xLim = this.state.xLim; i <= xLim; i++) {
                 const cell = _.find(grid.cells, (cell: CellInterface) => cell.x === i && cell.y === j);
                 const color = (cell.state === State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : 'black';
                 const style = {
@@ -67,7 +70,7 @@ export class GameGrid extends React.Component < any, any > {
     componentDidMount() {
         setInterval(() => {
             this.update()
-        }, 125);
+        }, 40);
     }
     render() {
         return (<table>

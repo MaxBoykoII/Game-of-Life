@@ -5,8 +5,8 @@ interface CellInterface {
     y: number;
     inchoate: boolean;
     state: State;
-    nextState: State;
     neighbors: any[];
+    liveNeighbors: number;
 }
 
 /* TODO add a more precise type for neighbors */

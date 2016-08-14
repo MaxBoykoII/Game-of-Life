@@ -12,13 +12,14 @@ export class Cell implements CellInterface {
     state: State;
     nextState: State;
     neighbors: Array<any>;
+    liveNeighbors: number;
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
         this.state = State.Dead;
-        this.nextState = State.Pending;
         this.neighbors = [];
         this.inchoate = false;
+        this.liveNeighbors = 0;
     }
 
 }
