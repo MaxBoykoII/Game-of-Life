@@ -37537,7 +37537,7 @@ var Cell = (function () {
 }());
 exports.Cell = Cell;
 
-},{"../constants/state-enum":180}],177:[function(require,module,exports){
+},{"../constants/state-enum":179}],177:[function(require,module,exports){
 "use strict";
 var _ = require('lodash');
 var cell_1 = require('./cell');
@@ -37550,10 +37550,10 @@ var Grid = (function () {
         this.cells = [];
         this.generations = 0;
     }
-    Grid.prototype.getNeighbors = function (x, y) {
-        var center = [x, y];
+    Grid.prototype.getNeighbors = function (cell) {
+        var center = [cell.x, cell.y];
         var limits = [this.xLim, this.yLim];
-        return neighbor_1.getNeighbors(center, limits);
+        return neighbor_1.neighborhood(center, limits);
     };
     Grid.prototype.initialize = function (threshold) {
         for (var i = 1; i <= this.xLim; i++) {
@@ -37561,25 +37561,27 @@ var Grid = (function () {
                 var x = i;
                 var y = j;
                 var cell = new cell_1.Cell(x, y);
-                cell.neighbors = this.getNeighbors(x, y);
                 this.cells.push(cell);
             }
         }
+        console.log(this.cells.length);
         for (var _i = 0, _a = this.cells; _i < _a.length; _i++) {
             var cell = _a[_i];
             if (Math.random() > threshold) {
                 cell.state = state_enum_1.State.Alive;
                 cell.inchoate = true;
             }
+            cell.neighbors = this.getNeighbors(cell);
         }
+        console.log(this.cells.filter(function (cell) { return cell.neighbors.length < 8; }));
     };
     Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
             cell.inchoate = false;
             var liveNeighbors = 0;
             var _loop_1 = function(x, y) {
-                var neighboringCell = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
-                if (neighboringCell.state === state_enum_1.State.Alive) {
+                var neighbor = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighbor.state === state_enum_1.State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = state_enum_1.State.Dead;
@@ -37598,8 +37600,8 @@ var Grid = (function () {
         else {
             var liveNeighbors = 0;
             var _loop_2 = function(x, y) {
-                var neighboringCell = _.find(this_2.cells, function (cell) { return cell.x === x && cell.y === y; });
-                if (neighboringCell.state === state_enum_1.State.Alive) {
+                var neighbor = _.find(this_2.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighbor.state === state_enum_1.State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = state_enum_1.State.Dead;
@@ -37634,7 +37636,7 @@ var Grid = (function () {
 }());
 exports.Grid = Grid;
 
-},{"../constants/state-enum":180,"../modules/neighbor":182,"./cell":176,"lodash":2}],178:[function(require,module,exports){
+},{"../constants/state-enum":179,"../modules/neighbor":181,"./cell":176,"lodash":2}],178:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37645,37 +37647,37 @@ var React = require('react');
 var _ = require('lodash');
 var grid_1 = require('../classes/grid');
 var state_enum_1 = require('../constants/state-enum');
-var testGrid = new grid_1.Grid(70, 50);
-testGrid.initialize(0.91);
+var testGrid = new grid_1.Grid(30, 40);
+testGrid.initialize(0.57);
 var GameGrid = (function (_super) {
     __extends(GameGrid, _super);
     function GameGrid() {
         _super.call(this);
         this.state = {
             grid: testGrid,
-            xLim: 70,
-            yLim: 50,
+            xLim: 30,
+            yLim: 40,
             generations: 0
         };
     }
     GameGrid.prototype._buildTableRows = function () {
         var lis = [];
-        var _loop_1 = function(i) {
+        var _loop_1 = function(i, xLim) {
             var row = [];
-            var _loop_2 = function(j) {
-                var cell = _.find(this_1.state.grid.cells, function (cell) { return cell.x === i && cell.y === j; });
+            var _loop_2 = function(j, yLim, grid) {
+                var cell = _.find(grid.cells, function (cell) { return cell.x === i && cell.y === j; });
                 var color = (cell.state === state_enum_1.State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : 'black';
                 var style = {
                     backgroundColor: color
                 };
-                var index = this_1.state.grid.cells.indexOf(cell);
+                var index = grid.cells.indexOf(cell);
                 row.push({
                     style: style,
                     index: index
                 });
             };
-            for (var j = 1; j <= this_1.state.yLim; j++) {
-                _loop_2(j);
+            for (var j = 1, yLim = this_1.state.yLim, grid = this_1.state.grid; j <= yLim; j++) {
+                _loop_2(j, yLim, grid);
             }
             lis.push(row.map(function (_a) {
                 var style = _a.style, index = _a.index;
@@ -37683,8 +37685,8 @@ var GameGrid = (function (_super) {
             }));
         };
         var this_1 = this;
-        for (var i = 1; i <= this.state.xLim; i++) {
-            _loop_1(i);
+        for (var i = 1, xLim = this.state.xLim; i <= xLim; i++) {
+            _loop_1(i, xLim);
         }
         return lis;
     };
@@ -37711,25 +37713,7 @@ var GameGrid = (function (_super) {
 }(React.Component));
 exports.GameGrid = GameGrid;
 
-},{"../classes/grid":177,"../constants/state-enum":180,"lodash":2,"react":175}],179:[function(require,module,exports){
-"use strict";
-var directions = [
-    [-1, -1],
-    [0, -1],
-    [1, -1],
-    [1, 0],
-    [1, 1],
-    [0, 1],
-    [-1, 1],
-    [-1, 0],
-], test_limits = [30, 40], test_center = [1, 1], threshold = 0.92, speed = 1000;
-exports.directions = directions;
-exports.test_limits = test_limits;
-exports.test_center = test_center;
-exports.threshold = threshold;
-exports.speed = speed;
-
-},{}],180:[function(require,module,exports){
+},{"../classes/grid":177,"../constants/state-enum":179,"lodash":2,"react":175}],179:[function(require,module,exports){
 "use strict";
 var State;
 (function (State) {
@@ -37740,19 +37724,26 @@ var State;
 exports.State = State;
 ;
 
-},{}],181:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 "use strict";
 var ReactDOM = require('react-dom');
 var React = require('react');
 var game_grid_1 = require('./components/game-grid');
 ReactDOM.render(React.createElement(game_grid_1.GameGrid, null), document.getElementById('grid-container'));
 
-},{"./components/game-grid":178,"react":175,"react-dom":3}],182:[function(require,module,exports){
+},{"./components/game-grid":178,"react":175,"react-dom":3}],181:[function(require,module,exports){
 "use strict";
-var game_constants_1 = require('../constants/game-constants');
+var directions = [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+    [0, 1],
+    [-1, 1],
+    [-1, 0],
+];
 function displace(x, y, center, limits) {
-    if (center === void 0) { center = game_constants_1.test_center; }
-    if (limits === void 0) { limits = game_constants_1.test_limits; }
     var xcord = x + center[0], ycord = y + center[1];
     if (xcord === 0) {
         xcord = limits[0];
@@ -37768,16 +37759,15 @@ function displace(x, y, center, limits) {
     }
     return [xcord, ycord];
 }
-function getNeighbors(center, limits) {
-    if (limits === void 0) { limits = game_constants_1.test_limits; }
+function neighborhood(center, limits) {
     var neighbors = [];
-    for (var _i = 0, directions_1 = game_constants_1.directions; _i < directions_1.length; _i++) {
+    for (var _i = 0, directions_1 = directions; _i < directions_1.length; _i++) {
         var dir = directions_1[_i];
         neighbors.push(displace(dir[0], dir[1], center, limits));
     }
     return neighbors;
 }
-exports.getNeighbors = getNeighbors;
+exports.neighborhood = neighborhood;
 
-},{"../constants/game-constants":179}]},{},[181])(181)
+},{}]},{},[180])(180)
 });

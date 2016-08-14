@@ -11,7 +11,7 @@ import {
 from '../constants/state-enum';
 
 import {
-    getNeighbors
+    neighborhood
 }
 from '../modules/neighbor';
 
@@ -26,32 +26,31 @@ export class Grid {
         this.cells = [];
         this.generations = 0;
     }
-    getNeighbors(x, y) {
+    getNeighbors(cell) {
         /* Helper function that computes the neighbors of a cell */
-        const center = [x, y];
+        const center = [cell.x, cell.y];
         const limits = [this.xLim, this.yLim];
 
-        return getNeighbors(center, limits);
+        return neighborhood(center, limits).map(([x,y]) => _.find(this.cells, cell => cell.x === x && cell.y === y));
     }
     initialize(threshold: number) {
         /*Build Grid*/
-        for (let i = 1; i <= this.xLim; i++) {
-            for (let j = 1; j <= this.yLim; j++) {
-                const x = i;
-                const y = j;
-                let cell = new Cell(x, y);
-                cell.neighbors = this.getNeighbors(x, y);
+        for (let i = 1, xLim = this.xLim; i <= xLim; i++) {
+            for (let j = 1, yLim = this.yLim; j <= yLim; j++) {
+                let cell = new Cell(i, j);
                 this.cells.push(cell);
             }
         }
-
+        console.log(this.cells.length);
         /*Build Start seed*/
         for (let cell of this.cells) {
             if (Math.random() > threshold) {
                 cell.state = State.Alive;
                 cell.inchoate = true;
             }
+            cell.neighbors = this.getNeighbors(cell);
         }
+        console.log(this.cells.filter(cell => cell.neighbors.length < 8));
     }
     _gameRules(cell) {
         /* Method for applying game rules to particular cell */
@@ -60,9 +59,8 @@ export class Grid {
             cell.inchoate = false;
 
             let liveNeighbors = 0;
-            for (let [x, y] of cell.neighbors) {
-                const neighboringCell = _.find(this.cells, (cell) => cell.x === x && cell.y === y);
-                if (neighboringCell.state === State.Alive) {
+            for (let neighbor of cell.neighbors) {
+                if (neighbor.state === State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = State.Dead;
@@ -74,9 +72,8 @@ export class Grid {
         }
         else {
             let liveNeighbors = 0;
-            for (let [x, y] of cell.neighbors) {
-                const neighboringCell = _.find(this.cells, (cell) => cell.x === x && cell.y === y);
-                if (neighboringCell.state === State.Alive) {
+            for (let neighbor of cell.neighbors) {
+                if (neighbor.state === State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = State.Dead;

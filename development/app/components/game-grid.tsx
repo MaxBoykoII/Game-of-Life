@@ -18,16 +18,16 @@ import {
 from '../constants/state-enum';
 
 
-const testGrid = new Grid(70, 50);
-testGrid.initialize(0.91);
+const testGrid = new Grid(30, 40);
+testGrid.initialize(0.57);
 
 export class GameGrid extends React.Component < any, any > {
     constructor() {
         super();
         this.state = {
             grid: testGrid,
-            xLim: 70,
-            yLim: 50,
+            xLim: 30,
+            yLim: 40,
             generations: 0
         };
     }
@@ -36,15 +36,15 @@ export class GameGrid extends React.Component < any, any > {
 
         let lis = [];
 
-        for (let i = 1; i <= this.state.xLim; i++) {
+        for (let i = 1, xLim= this.state.xLim; i <= xLim; i++) {
             let row = [];
-            for (let j = 1; j <= this.state.yLim; j++) {
-                const cell = _.find(this.state.grid.cells, (cell: CellInterface) => cell.x === i && cell.y === j);
+            for (let j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
+                const cell = _.find(grid.cells, (cell: CellInterface) => cell.x === i && cell.y === j);
                 const color = (cell.state === State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : 'black';
                 const style = {
                     backgroundColor: color
                 };
-                const index = this.state.grid.cells.indexOf(cell);
+                const index = grid.cells.indexOf(cell);
                 row.push({
                     style,
                     index

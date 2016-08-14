@@ -1,14 +1,17 @@
-import {
-    directions,
-    test_limits,
-    test_center,
-    threshold
-}
-from '../constants/game-constants';
+const directions = [
+        [-1, -1],
+        [0, -1],
+        [1, -1],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [-1, 1],
+        [-1, 0],
+    ]
 
 
 
-function displace(x, y, center = test_center, limits = test_limits) {
+function displace(x, y, center, limits) {
     let xcord = x + center[0],
         ycord = y + center[1];
     if (xcord === 0) {
@@ -26,7 +29,7 @@ function displace(x, y, center = test_center, limits = test_limits) {
     return [xcord, ycord];
 }
 
-function getNeighbors(center, limits = test_limits) {
+function neighborhood(center, limits) {
     let neighbors = [];
     for (let dir of directions) {
         neighbors.push(displace(dir[0], dir[1], center, limits));
@@ -37,5 +40,5 @@ function getNeighbors(center, limits = test_limits) {
 
 
 export {
-    getNeighbors,
+    neighborhood,
 };

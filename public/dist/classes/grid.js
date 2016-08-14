@@ -10,10 +10,10 @@ var Grid = (function () {
         this.cells = [];
         this.generations = 0;
     }
-    Grid.prototype.getNeighbors = function (x, y) {
-        var center = [x, y];
+    Grid.prototype.getNeighbors = function (cell) {
+        var center = [cell.x, cell.y];
         var limits = [this.xLim, this.yLim];
-        return neighbor_1.getNeighbors(center, limits);
+        return neighbor_1.neighborhood(center, limits);
     };
     Grid.prototype.initialize = function (threshold) {
         for (var i = 1; i <= this.xLim; i++) {
@@ -21,25 +21,27 @@ var Grid = (function () {
                 var x = i;
                 var y = j;
                 var cell = new cell_1.Cell(x, y);
-                cell.neighbors = this.getNeighbors(x, y);
                 this.cells.push(cell);
             }
         }
+        console.log(this.cells.length);
         for (var _i = 0, _a = this.cells; _i < _a.length; _i++) {
             var cell = _a[_i];
             if (Math.random() > threshold) {
                 cell.state = state_enum_1.State.Alive;
                 cell.inchoate = true;
             }
+            cell.neighbors = this.getNeighbors(cell);
         }
+        console.log(this.cells.filter(function (cell) { return cell.neighbors.length < 8; }));
     };
     Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
             cell.inchoate = false;
             var liveNeighbors = 0;
             var _loop_1 = function(x, y) {
-                var neighboringCell = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
-                if (neighboringCell.state === state_enum_1.State.Alive) {
+                var neighbor = _.find(this_1.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighbor.state === state_enum_1.State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = state_enum_1.State.Dead;
@@ -58,8 +60,8 @@ var Grid = (function () {
         else {
             var liveNeighbors = 0;
             var _loop_2 = function(x, y) {
-                var neighboringCell = _.find(this_2.cells, function (cell) { return cell.x === x && cell.y === y; });
-                if (neighboringCell.state === state_enum_1.State.Alive) {
+                var neighbor = _.find(this_2.cells, function (cell) { return cell.x === x && cell.y === y; });
+                if (neighbor.state === state_enum_1.State.Alive) {
                     ++liveNeighbors;
                     if (liveNeighbors > 3) {
                         cell.nextState = state_enum_1.State.Dead;
