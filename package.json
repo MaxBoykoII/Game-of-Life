@@ -1,6 +1,6 @@
 {
   "name": "game-of-life-app",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "React implementation for James Conway's Game of Life",
   "main": "main.js",
   "scripts": {
