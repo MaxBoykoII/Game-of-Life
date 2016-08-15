@@ -37673,7 +37673,7 @@ var GameGrid = (function (_super) {
         var _this = this;
         setInterval(function () {
             _this.update();
-        }, 50);
+        }, 40);
     };
     GameGrid.prototype.render = function () {
         return (React.createElement("table", null, React.createElement("caption", null, this.state.generations), React.createElement("tbody", null, this._buildTableRows().map(function (row, i) {

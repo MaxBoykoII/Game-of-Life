@@ -76,7 +76,7 @@ export class GameGrid extends React.Component < any, any > {
     componentDidMount() {
         setInterval(() => {
             this.update()
-        }, 50);
+        }, 40);
     }
     render() {
         return (<table>
