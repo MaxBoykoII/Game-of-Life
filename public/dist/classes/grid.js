@@ -8,6 +8,7 @@ var Grid = (function () {
         this.xLim = xLim;
         this.yLim = yLim;
         this.cells = [];
+        this.rows = [];
         this.generations = 0;
     }
     Grid.prototype.getNeighbors = function (cell) {
@@ -35,6 +36,8 @@ var Grid = (function () {
                 _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
             }
         }
+        this.rows = _.chunk(this.cells, this.xLim);
+        console.log(this.rows);
     };
     Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
@@ -48,15 +51,19 @@ var Grid = (function () {
         cell.liveNeighbors = 0;
     };
     Grid.prototype.update = function () {
+        var _this = this;
         ++this.generations;
-        for (var _i = 0, _a = this.cells; _i < _a.length; _i++) {
-            var cell = _a[_i];
-            this._gameRules(cell);
+        for (var _i = 0, _a = this.rows; _i < _a.length; _i++) {
+            var row = _a[_i];
+            _.each(row, function (cell) { return _this._gameRules(cell); });
         }
-        for (var _b = 0, _c = this.cells; _b < _c.length; _b++) {
-            var cell = _c[_b];
-            if (cell.state === state_enum_1.State.Alive) {
-                _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
+        for (var _b = 0, _c = this.rows; _b < _c.length; _b++) {
+            var row = _c[_b];
+            for (var _d = 0, row_1 = row; _d < row_1.length; _d++) {
+                var cell = row_1[_d];
+                if (cell.state === state_enum_1.State.Alive) {
+                    _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
+                }
             }
         }
         return this;

@@ -19,11 +19,13 @@ export class Grid {
     xLim: number;
     yLim: number;
     cells: Cell[];
+    rows: Array < any > ;
     generations: number;
     constructor(xLim: number, yLim: number) {
         this.xLim = xLim;
         this.yLim = yLim;
         this.cells = [];
+        this.rows = [];
         this.generations = 0;
     }
     getNeighbors(cell) {
@@ -46,13 +48,15 @@ export class Grid {
         /*Build Start seed*/
         for (let cell of this.cells) {
             cell.neighbors = this.getNeighbors(cell);
-            
+
             if (Math.random() > threshold) {
                 cell.state = State.Alive;
                 cell.inchoate = true;
                 _.each(cell.neighbors, neighbor => ++neighbor.liveNeighbors);
             }
         }
+        this.rows = _.chunk(this.cells, this.xLim);
+        console.log(this.rows);
     }
     _gameRules(cell) {
         /* Method for applying game rules to particular cell */
@@ -72,14 +76,16 @@ export class Grid {
         /* Update the generations */
         ++this.generations;
 
-        /* Apply game logic to each cell */
-        for (let cell of this.cells) {
-            this._gameRules(cell);
+        /* Apply game logic to each cell in each row */
+        for (let row of this.rows) {
+            _.each(row, cell => this._gameRules(cell));
         }
-        for (let cell of this.cells) {
-            /* Each live cell updates its neighbors' live cell counts */
-            if (cell.state === State.Alive) {
-                _.each(cell.neighbors, (neighbor) => ++neighbor.liveNeighbors)
+        for (let row of this.rows) {
+            for (let cell of row) {
+                /* Each live cell updates its neighbors' live cell counts */
+                if (cell.state === State.Alive) {
+                    _.each(cell.neighbors, (neighbor) => ++neighbor.liveNeighbors)
+                }
             }
         }
         return this;

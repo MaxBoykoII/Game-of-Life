@@ -17,3 +17,10 @@ table tr,
 table td {
     border: 1px solid #8E3A59;
 }
+
+.alive {
+    background-color: #4166F5;
+}
+.newborn {
+    background-color: #8aa1f9;
+}

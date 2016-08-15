@@ -37548,6 +37548,7 @@ var Grid = (function () {
         this.xLim = xLim;
         this.yLim = yLim;
         this.cells = [];
+        this.rows = [];
         this.generations = 0;
     }
     Grid.prototype.getNeighbors = function (cell) {
@@ -37575,6 +37576,8 @@ var Grid = (function () {
                 _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
             }
         }
+        this.rows = _.chunk(this.cells, this.xLim);
+        console.log(this.rows);
     };
     Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
@@ -37588,15 +37591,19 @@ var Grid = (function () {
         cell.liveNeighbors = 0;
     };
     Grid.prototype.update = function () {
+        var _this = this;
         ++this.generations;
-        for (var _i = 0, _a = this.cells; _i < _a.length; _i++) {
-            var cell = _a[_i];
-            this._gameRules(cell);
+        for (var _i = 0, _a = this.rows; _i < _a.length; _i++) {
+            var row = _a[_i];
+            _.each(row, function (cell) { return _this._gameRules(cell); });
         }
-        for (var _b = 0, _c = this.cells; _b < _c.length; _b++) {
-            var cell = _c[_b];
-            if (cell.state === state_enum_1.State.Alive) {
-                _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
+        for (var _b = 0, _c = this.rows; _b < _c.length; _b++) {
+            var row = _c[_b];
+            for (var _d = 0, row_1 = row; _d < row_1.length; _d++) {
+                var cell = row_1[_d];
+                if (cell.state === state_enum_1.State.Alive) {
+                    _.each(cell.neighbors, function (neighbor) { return ++neighbor.liveNeighbors; });
+                }
             }
         }
         return this;
@@ -37613,7 +37620,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require('react');
-var _ = require('lodash');
 var grid_1 = require('../classes/grid');
 var state_enum_1 = require('../constants/state-enum');
 var testGrid = new grid_1.Grid(50, 70);
@@ -37634,31 +37640,25 @@ var GameGrid = (function (_super) {
     }
     GameGrid.prototype._buildTableRows = function () {
         var lis = [];
-        var _loop_1 = function(j, yLim, grid) {
-            var row = [];
-            var _loop_2 = function(i, xLim) {
-                var cell = _.find(grid.cells, function (cell) { return cell.x === i && cell.y === j; });
-                var color = (cell.state === state_enum_1.State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : 'black';
+        for (var j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
+            var rowData = [];
+            var row = grid.rows[j - 1];
+            for (var _i = 0, row_1 = row; _i < row_1.length; _i++) {
+                var cell = row_1[_i];
+                var color = (cell.state === state_enum_1.State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : '';
                 var style = {
                     backgroundColor: color
                 };
                 var index = grid.cells.indexOf(cell);
-                row.push({
+                rowData.push({
                     style: style,
                     index: index
                 });
-            };
-            for (var i = 1, xLim = this_1.state.xLim; i <= xLim; i++) {
-                _loop_2(i, xLim);
             }
-            lis.push(row.map(function (_a) {
+            lis.push(rowData.map(function (_a) {
                 var style = _a.style, index = _a.index;
                 return React.createElement("td", {key: index, style: style});
             }));
-        };
-        var this_1 = this;
-        for (var j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
-            _loop_1(j, yLim, grid);
         }
         return lis;
     };
@@ -37673,7 +37673,7 @@ var GameGrid = (function (_super) {
         var _this = this;
         setInterval(function () {
             _this.update();
-        }, 40);
+        }, 50);
     };
     GameGrid.prototype.render = function () {
         return (React.createElement("table", null, React.createElement("caption", null, this.state.generations), React.createElement("tbody", null, this._buildTableRows().map(function (row, i) {
@@ -37685,7 +37685,7 @@ var GameGrid = (function (_super) {
 }(React.Component));
 exports.GameGrid = GameGrid;
 
-},{"../classes/grid":177,"../constants/state-enum":179,"lodash":2,"react":175}],179:[function(require,module,exports){
+},{"../classes/grid":177,"../constants/state-enum":179,"react":175}],179:[function(require,module,exports){
 "use strict";
 var State;
 (function (State) {
