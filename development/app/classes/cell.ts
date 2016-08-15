@@ -10,7 +10,6 @@ export class Cell implements CellInterface {
     y: number;
     inchoate: boolean;
     state: State;
-    nextState: State;
     neighbors: Array<any>;
     liveNeighbors: number;
     constructor(x: number, y: number) {

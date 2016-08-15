@@ -62,7 +62,9 @@ export class Grid {
         /* Method for applying game rules to particular cell */
         if (cell.state === State.Alive) {
             cell.inchoate = false;
-            cell.state = (cell.liveNeighbors === 2 || cell.liveNeighbors === 3) ? State.Alive : State.Dead;
+            if(cell.liveNeighbors < 2 || cell.liveNeighbors > 3){
+                cell.state = State.Dead;
+            }
         }
         else if (cell.liveNeighbors === 3) {
             cell.state = State.Alive;

@@ -24,6 +24,7 @@
   "devDependencies": {
     "bower": "^1.7.9",
     "browserify": "^13.1.0",
+    "envify": "^3.4.1",
     "gulp": "^3.9.1",
     "gulp-rm": "^1.0.1",
     "gulp-sourcemaps": "^1.6.0",

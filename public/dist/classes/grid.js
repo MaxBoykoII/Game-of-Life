@@ -42,7 +42,9 @@ var Grid = (function () {
     Grid.prototype._gameRules = function (cell) {
         if (cell.state === state_enum_1.State.Alive) {
             cell.inchoate = false;
-            cell.state = (cell.liveNeighbors === 2 || cell.liveNeighbors === 3) ? state_enum_1.State.Alive : state_enum_1.State.Dead;
+            if (cell.liveNeighbors < 2 || cell.liveNeighbors > 3) {
+                cell.state = state_enum_1.State.Dead;
+            }
         }
         else if (cell.liveNeighbors === 3) {
             cell.state = state_enum_1.State.Alive;
