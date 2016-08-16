@@ -37624,7 +37624,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var React = require('react');
 var grid_1 = require('../classes/grid');
 var state_enum_1 = require('../constants/state-enum');
-var testGrid = new grid_1.Grid(50, 70);
+var testGrid = new grid_1.Grid(40, 40);
 testGrid.initialize(0.60);
 console.time('first time test');
 testGrid.update();
@@ -37634,10 +37634,12 @@ var GameGrid = (function (_super) {
     function GameGrid() {
         _super.call(this);
         this.state = {
-            grid: testGrid,
-            xLim: 50,
-            yLim: 70,
-            generations: 0
+            grid: null,
+            xLim: 40,
+            yLim: 40,
+            generations: 0,
+            speed: 0,
+            threshold: 0.50
         };
     }
     GameGrid.prototype._buildTableRows = function () {
@@ -37671,11 +37673,18 @@ var GameGrid = (function (_super) {
             generations: grid.generations
         });
     };
+    GameGrid.prototype.componentWillMount = function () {
+        var grid = new grid_1.Grid(this.state.xLim, this.state.yLim);
+        grid.initialize(this.state.threshold);
+        this.setState({
+            grid: grid
+        });
+    };
     GameGrid.prototype.componentDidMount = function () {
         var _this = this;
         setInterval(function () {
             _this.update();
-        }, 40);
+        }, this.state.speed);
     };
     GameGrid.prototype.render = function () {
         return (React.createElement("table", null, React.createElement("caption", null, this.state.generations), React.createElement("tbody", null, this._buildTableRows().map(function (row, i) {

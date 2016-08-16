@@ -17,14 +17,10 @@ import {
 }
 from '../constants/state-enum';
 
-import {
-    GameCell
-}
-from './game-cell';
 
 
 
-const testGrid = new Grid(50, 70);
+const testGrid = new Grid(40, 40);
 testGrid.initialize(0.60);
 console.time('first time test');
 testGrid.update();
@@ -34,10 +30,12 @@ export class GameGrid extends React.Component < any, any > {
     constructor() {
         super();
         this.state = {
-            grid: testGrid,
-            xLim: 50,
-            yLim: 70,
-            generations: 0
+            grid: null,
+            xLim: 40,
+            yLim: 40,
+            generations: 0,
+            speed: 0,
+            threshold: 0.50
         };
     }
     _buildTableRows() {
@@ -47,7 +45,7 @@ export class GameGrid extends React.Component < any, any > {
 
         for (let j = 1, yLim = this.state.yLim, grid = this.state.grid; j <= yLim; j++) {
             let rowData = [];
-            const row = grid.rows[j-1];
+            const row = grid.rows[j - 1];
             for (let cell of row) {
                 const color = (cell.state === State.Alive) ? ((cell.inchoate) ? '#8aa1f9' : '#4166F5') : '';
                 const style = {
@@ -73,10 +71,18 @@ export class GameGrid extends React.Component < any, any > {
             generations: grid.generations
         });
     }
+    componentWillMount() {
+        const grid = new Grid(this.state.xLim, this.state.yLim);
+        grid.initialize(this.state.threshold);
+        this.setState({
+            grid
+        });
+    }
     componentDidMount() {
+
         setInterval(() => {
             this.update()
-        }, 40);
+        }, this.state.speed);
     }
     render() {
         return (<table>
