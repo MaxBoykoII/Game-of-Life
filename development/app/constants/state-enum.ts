@@ -1,8 +1,6 @@
- enum State {
+export enum State {
      Alive,
      Dead
  };
 
- export {
-     State
- };
+ 

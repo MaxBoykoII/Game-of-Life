@@ -3,6 +3,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import {
+    Cell
+}
+from '../classes/cell';
+
+import {
     Grid
 }
 from '../classes/grid';
@@ -17,26 +22,55 @@ import {
 }
 from '../constants/state-enum';
 
+import {
+    Speed
+}
+from '../constants/speed-enum';
+
+import {
+    SpeedControls
+}
+from './game-controls';
 
 
 
-const testGrid = new Grid(40, 40);
+const testGrid = new Grid(70, 50);
 testGrid.initialize(0.60);
 console.time('first time test');
 testGrid.update();
 console.timeEnd('first time test');
 
 export class GameGrid extends React.Component < any, any > {
+    private _timer;
     constructor() {
         super();
         this.state = {
             grid: null,
-            xLim: 40,
-            yLim: 40,
+            xLim: 50,
+            yLim: 30,
             generations: 0,
-            speed: 0,
+            speed: 100,
             threshold: 0.50
         };
+    }
+    newCellState(index) {
+        /* Update state of a cell */
+
+        const grid: Grid = this.state.grid;
+        const cells: Cell[] = _.flatten(grid.rows);
+        const cell: Cell = cells[index];
+
+        if (cell.state === State.Dead) {
+            cell.state = State.Alive;
+            cell.inchoate = true;
+        }
+        else {
+            cell.state = State.Dead;
+            cell.inchoate = false;
+        }
+        this.setState({
+            grid
+        });
     }
     _buildTableRows() {
         /* Helper to build table rows from the cells of this.state.grid */
@@ -60,15 +94,33 @@ export class GameGrid extends React.Component < any, any > {
             lis.push(rowData.map(({
                 style,
                 index
-            }) => <td key={index} style={style}></td>));
+            }) => <td key={index} style={style} onClick={this.newCellState.bind(this, index)} ></td>));
         }
         return lis;
     }
-    update() {
+
+    updateGrid() {
         const grid = this.state.grid.update();
         this.setState({
             grid,
             generations: grid.generations
+        });
+    }
+    updateSpeed(speed: Speed) {
+        let newSpeed;
+        switch (speed) {
+            case Speed.Slow:
+                newSpeed = 200;
+                break;
+            case Speed.Mild:
+                newSpeed = 100;
+                break;
+            case Speed.Fast:
+                newSpeed = 40;
+                break;
+        }
+        this.setState({
+            speed: newSpeed
         });
     }
     componentWillMount() {
@@ -79,19 +131,20 @@ export class GameGrid extends React.Component < any, any > {
         });
     }
     componentDidMount() {
-
-        setInterval(() => {
-            this.update()
+        this._timer = setInterval(() => {
+            this.updateGrid()
         }, this.state.speed);
     }
     render() {
-        return (<table>
+        return (<div><table>
             <caption>{this.state.generations}</caption>
             <tbody>
                 {this._buildTableRows().map((row, i) => { const id = `row${i}`;
                 return <tr key={id}>{row}</tr>
                 })}
             </tbody>
-        </table>);
+        </table>
+        <SpeedControls/>
+        </div>);
     }
 }
