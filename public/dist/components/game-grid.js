@@ -77,6 +77,7 @@ var GameGrid = (function (_super) {
         });
     };
     GameGrid.prototype.updateSpeed = function (speed) {
+        var _this = this;
         var newSpeed;
         switch (speed) {
             case speed_enum_1.Speed.Slow:
@@ -92,6 +93,10 @@ var GameGrid = (function (_super) {
         this.setState({
             speed: newSpeed
         });
+        clearInterval(this._timer);
+        this._timer = setInterval(function () {
+            _this.updateGrid();
+        }, newSpeed);
     };
     GameGrid.prototype.componentWillMount = function () {
         var grid = new grid_1.Grid(this.state.xLim, this.state.yLim);
@@ -110,7 +115,7 @@ var GameGrid = (function (_super) {
         return (React.createElement("div", null, React.createElement("table", null, React.createElement("caption", null, this.state.generations), React.createElement("tbody", null, this._buildTableRows().map(function (row, i) {
             var id = "row" + i;
             return React.createElement("tr", {key: id}, row);
-        }))), React.createElement(game_controls_1.SpeedControls, null)));
+        }))), React.createElement(game_controls_1.SpeedControls, {speedCallback: this.updateSpeed.bind(this)})));
     };
     return GameGrid;
 }(React.Component));

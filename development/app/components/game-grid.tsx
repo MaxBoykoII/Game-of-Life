@@ -119,9 +119,14 @@ export class GameGrid extends React.Component < any, any > {
                 newSpeed = 40;
                 break;
         }
+        
         this.setState({
             speed: newSpeed
         });
+        clearInterval(this._timer);
+           this._timer = setInterval(() => {
+            this.updateGrid()
+        }, newSpeed);
     }
     componentWillMount() {
         const grid = new Grid(this.state.xLim, this.state.yLim);
@@ -144,7 +149,7 @@ export class GameGrid extends React.Component < any, any > {
                 })}
             </tbody>
         </table>
-        <SpeedControls/>
+        <SpeedControls speedCallback = {this.updateSpeed.bind(this)}/>
         </div>);
     }
 }
